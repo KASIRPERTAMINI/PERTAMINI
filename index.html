@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasir Pertamini PRO Cloud</title>
+    <title>Kasir Pertamini (Akurasi Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS SAMA SEPERTI SEBELUMNYA, TIDAK ADA PERUBAHAN VISUAL SIGNIFIKAN --- */
         :root {
             --primary: #dc3545;
             --primary-dark: #c82333;
             --bg-light: #f0f2f5;
             --text-dark: #333;
+            --gray: #6c757d;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -52,7 +52,7 @@
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         input, select {
             width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;
-            font-family: inherit; font-size: 16px; /* Larger font for mobile input prevent zoom */
+            font-family: inherit; font-size: 16px;
         }
         input:focus, select:focus { outline: none; border-color: var(--primary); }
         .btn-main {
@@ -62,23 +62,28 @@
         }
         .btn-main:hover { background: var(--primary-dark); transform: translateY(-2px); }
         .btn-main:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        /* --- TOMBOL RESET BARU --- */
+        #btn-reset-all {
+            background: var(--gray);
+            margin-top: 20px;
+        }
+        #btn-reset-all:hover {
+            background: #5a6268;
+        }
 
-        /* STATUS KONEKSI */
         #connectionStatus {
             text-align: center; padding: 5px; font-size: 12px; font-weight: 600;
             background: #ffeeba; color: #856404; display: none;
         }
         #connectionStatus.online { background: #d4edda; color: #155724; }
         #connectionStatus.offline { background: #f8d7da; color: #721c24; display: block; }
-
-        /* RESULT & STATS */
         .results-box {
             background: #f8f9fa; padding: 15px; border-radius: 12px;
             margin: 20px 0; border-left: 5px solid var(--primary);
         }
         .result-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; }
         .result-value { font-weight: 700; color: var(--primary); font-size: 18px; }
-        
         .stats-box { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
         .stat {
             padding: 20px; background: linear-gradient(to bottom right, #fff5f7, #fff);
@@ -87,8 +92,6 @@
         }
         .stat-value { font-size: 22px; font-weight: 800; color: var(--primary); margin: 5px 0; }
         .stat-label { font-size: 12px; color: #666; text-transform: uppercase; font-weight: 600; }
-
-        /* FUEL LIST & HISTORY */
         .fuel-item, .transaction-item {
             background: white; padding: 15px; border-radius: 12px;
             margin-bottom: 10px; border: 1px solid #e0e0e0;
@@ -98,23 +101,98 @@
         .fuel-details h3 { font-size: 16px; margin-bottom: 5px; }
         .fuel-price-tag { font-size: 12px; color: #666; }
         .btn-delete { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        
         .transaction-item { border-left: 4px solid var(--primary); }
         .tx-header { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
         .tx-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; font-size: 13px; color: #555; }
         .tx-footer { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e0e0e0; font-weight: 700; color: var(--primary); font-size: 14px; text-align: right; }
-
         .loading-spinner {
             text-align: center; padding: 20px; color: #999; font-style: italic;
         }
         footer { text-align: center; padding: 20px; color: #999; font-size: 12px; background: #f8f9fa; }
+
+        /* --- CSS MODAL KONFIRMASI BARU --- */
+        #modalOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #modalBox {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1001;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        #modalOverlay.show {
+            opacity: 1;
+        }
+        #modalOverlay.show #modalBox {
+            transform: scale(1);
+        }
+        #modalIcon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        #modalTitle {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        #modalMessage {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .modal-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #modalCancel {
+            background: #e0e0e0;
+            color: #555;
+        }
+        #modalCancel:hover {
+            background: #ccc;
+        }
+        #modalConfirm {
+            background: var(--primary);
+            color: white;
+        }
+        #modalConfirm:hover {
+            background: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="connectionStatus">Menghubungkan ke Cloud...</div>
         <header>
-            <h1>KASIR PERTAMINI PRO</h1>
+            <h1>KASIR PERTAMINI</h1>
             <div class="header-info">
                 <span id="dateDisplay">Memuat tanggal...</span>
             </div>
@@ -136,16 +214,16 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Nominal Pembayaran (Rp)</label>
-                    <input type="tel" id="txAmount" placeholder="Contoh: 25000" oninput="calculateRealtime()">
+                    <label id="inputLabel">Nominal Pembayaran (Rp)</label>
+                    <input type="tel" id="mainInput" placeholder="Contoh: 25000" oninput="calculateRealtime()">
                 </div>
 
                 <div class="results-box">
                     <div class="result-row">
                         <span>Liter Didapat:</span>
-                        <span class="result-value" id="resLiters">0.000 L</span>
+                        <span class="result-value" id="resLiters">0.00 L</span>
                     </div>
-                    <div class="result-row">
+                    <div class="result-row" style="border-top: 1px dashed #ddd; margin-top: 10px; padding-top: 10px;">
                         <span>Estimasi Profit:</span>
                         <span class="result-value" id="resProfit">Rp 0</span>
                     </div>
@@ -172,6 +250,11 @@
                 <div id="historyList">
                     <div class="loading-spinner">Memuat data dari cloud...</div>
                 </div>
+
+                <!-- --- TOMBOL RESET BARU --- -->
+                <button id="btn-reset-all" class="btn-main" onclick="confirmResetStep1()">
+                    Reset Semua Transaksi
+                </button>
             </div>
 
             <!-- Setup Tab -->
@@ -183,11 +266,11 @@
                 <div class="input-row">
                     <div class="input-group">
                         <label>Harga Modal / Liter</label>
-                        <input type="tel" id="setupCost" placeholder="10000">
+                        <input type="tel" id="setupCost" placeholder="11000">
                     </div>
                     <div class="input-group">
                         <label>Harga Jual / Liter</label>
-                        <input type="tel" id="setupSell" placeholder="12500">
+                        <input type="tel" id="setupSell" placeholder="13000">
                     </div>
                 </div>
                 <button class="btn-main" onclick="addFuelToCloud()">TAMBAH DATA BBM</button>
@@ -200,15 +283,29 @@
         </div>
 
         <footer>
-            © 2025 Pertamini Cloud System | Real-time Sync
+            © 2025 Pertamini Cloud System | ASKA PRODUCTION 
         </footer>
     </div>
+
+    <!-- --- STRUKTUR MODAL KONFIRMASI BARU --- -->
+    <div id="modalOverlay">
+        <div id="modalBox">
+            <div id="modalIcon">⚠️</div>
+            <h2 id="modalTitle">Konfirmasi Hapus</h2>
+            <p id="modalMessage">Apakah Anda yakin?</p>
+            <div class="modal-buttons">
+                <button id="modalCancel" class="modal-btn" onclick="hideModal()">Batal</button>
+                <button id="modalConfirm" class="modal-btn">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- FIREBASE SDK (Wajib Online) -->
     <script type="module">
         // Import Firebase yang dibutuhkan
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, remove, serverTimestamp, query, orderByChild, equalTo } 
+        import { getDatabase, ref, push, set, onValue, remove, serverTimestamp } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // ==================================================================
@@ -217,7 +314,6 @@
         const firebaseConfig = {
             apiKey: "AIzaSyCaA-j-DyAhYfrSD5wOZWN6Q-PIeyycD80",
             authDomain: "kasirpertamini.firebaseapp.com",
-            // SAYA TAMBAHKAN BARIS INI OTOMATIS, KARENA INI WAJIB UNTUK REALTIME DATABASE
             databaseURL: "https://kasirpertamini-default-rtdb.firebaseio.com",
             projectId: "kasirpertamini",
             storageBucket: "kasirpertamini.firebasestorage.app",
@@ -241,7 +337,7 @@
         const fuelsRef = ref(db, 'fuels');
         const txRef = ref(db, 'transactions');
 
-        // Variabel Global untuk Data Lokal (Cache agar cepat)
+        // Variabel Global
         let cachedFuels = {};
         let currentSelectedFuel = null;
 
@@ -259,8 +355,8 @@
             const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
             
             return {
-                fullDate: `${y}-${m}-${d}`,     // Format Database: YYYY-MM-DD
-                monthStr: `${y}-${m}`,          // Format Database: YYYY-MM
+                fullDate: `${y}-${m}-${d}`,
+                monthStr: `${y}-${m}`,
                 display: `${days[now.getDay()]}, ${d} ${months[now.getMonth()]} ${y}`,
                 monthDisplay: `${months[now.getMonth()]} ${y}`
             };
@@ -287,10 +383,9 @@
             const name = document.getElementById('setupName').value.trim();
             const cost = parseFloat(document.getElementById('setupCost').value);
             const sell = parseFloat(document.getElementById('setupSell').value);
-
             if (!name || !cost || !sell) { alert("Lengkapi data BBM!"); return; }
-
-            // Simpan ke Firebase (otomatis buat ID unik)
+            if (sell <= cost) { alert("Harga Jual harus lebih tinggi dari Harga Modal!"); return; }
+            
             const newFuelRef = push(fuelsRef);
             set(newFuelRef, {
                 name: name,
@@ -312,50 +407,38 @@
         }
 
         // --- LISTENER DATA REAL-TIME (Jantung Aplikasi) ---
-        // 1. Dengar perubahan data BBM
         onValue(fuelsRef, (snapshot) => {
             const fuelListEl = document.getElementById('fuelListCloud');
             const txFuelSelect = document.getElementById('txFuel');
-            
             if (!snapshot.exists()) {
                 fuelListEl.innerHTML = '<div class="loading-spinner">Belum ada data BBM</div>';
                 txFuelSelect.innerHTML = '<option value="">-- Tidak ada data BBM --</option>';
-                cachedFuels = {};
-                return;
+                cachedFuels = {}; return;
             }
-
             cachedFuels = snapshot.val();
             let listHtml = '';
             let selectHtml = '<option value="">-- Pilih BBM --</option>';
-
-            // Loop data dari Firebase
             for (let id in cachedFuels) {
                 const fuel = cachedFuels[id];
-                // HTML untuk Setup List
                 listHtml += `
                     <div class="fuel-item">
                         <div class="fuel-details">
                             <h3>${fuel.name}</h3>
                             <div class="fuel-price-tag">
-                                Modal: <b>${formatRupiah(fuel.costPrice)}</b> | 
-                                Jual: <b>${formatRupiah(fuel.sellPrice)}</b>
+                                Modal: <b>${formatRupiah(fuel.costPrice)}</b> | Jual: <b>${formatRupiah(fuel.sellPrice)}</b>
                             </div>
                         </div>
                         <button class="btn-delete" onclick="deleteFuel('${id}')">Hapus</button>
-                    </div>
-                `;
-                // HTML untuk Dropdown Transaksi
-                selectHtml += `<option value="${id}">${fuel.name}</option>`;
+                    </div>`;
+                selectHtml += `<option value="${id}">${fuel.name} (${formatRupiah(fuel.sellPrice)}/L)</option>`;
             }
-
             fuelListEl.innerHTML = listHtml;
-            // Simpan seleksi saat ini agar tidak reset jika ada update data lain
             const currentVal = txFuelSelect.value;
             txFuelSelect.innerHTML = selectHtml;
             if (currentVal && cachedFuels[currentVal]) txFuelSelect.value = currentVal;
+            calculateRealtime();
         });
 
-        // 2. Dengar perubahan Transaksi (Hanya ambil data hari ini & bulan ini untuk efisiensi)
         onValue(txRef, (snapshot) => {
             updateStatsAndHistory(snapshot.val());
         });
@@ -363,64 +446,14 @@
         function updateStatsAndHistory(transactions) {
             const historyEl = document.getElementById('historyList');
             const dates = getDates();
-            
-            let dailyProfit = 0;
-            let monthlyProfit = 0;
+            let dailyProfit = 0, monthlyProfit = 0, todayTxCount = 0;
             let todayTxHtml = '';
-            let todayTxCount = 0;
-
             if (transactions) {
-                // Convert object to array dan sort descending berdasarkan waktu
                 const txArray = Object.entries(transactions).sort((a, b) => b[1].timestamp - a[1].timestamp);
-
                 for (let [id, tx] of txArray) {
-                    // Hitung Stats
                     if (tx.dateString === dates.fullDate) dailyProfit += tx.profit;
                     if (tx.monthString === dates.monthStr) monthlyProfit += tx.profit;
-
-                    // Render History Hari Ini Saja
                     if (tx.dateString === dates.fullDate) {
                         todayTxCount++;
                         const time = new Date(tx.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-                        todayTxHtml += `
-                            <div class="transaction-item">
-                                <div class="tx-header">
-                                    <span>${tx.fuelName}</span>
-                                    <span>${time}</span>
-                                </div>
-                                <div class="tx-body">
-                                    <div>Bayar:<br><b>${formatRupiah(tx.payAmount)}</b></div>
-                                    <div style="text-align:center">Liter:<br><b>${tx.liters.toFixed(3)} L</b></div>
-                                    <div style="text-align:right">Harga/L:<br><b>${formatRupiah(tx.sellPrice)}</b></div>
-                                </div>
-                                <div class="tx-footer">
-                                    Profit: ${formatRupiah(tx.profit)}
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-            }
-
-            // Update UI Stats
-            document.getElementById('statDailyProfit').textContent = formatRupiah(dailyProfit);
-            document.getElementById('statMonthlyProfit').textContent = formatRupiah(monthlyProfit);
-            document.getElementById('statDailyDate').textContent = dates.display;
-            document.getElementById('statMonthlyDate').textContent = dates.monthDisplay;
-
-            // Update UI History
-            if (todayTxCount === 0) {
-                historyEl.innerHTML = '<div class="loading-spinner">Belum ada transaksi hari ini</div>';
-            } else {
-                historyEl.innerHTML = todayTxHtml;
-            }
-        }
-
-        // --- KALKULASI REAL-TIME & TRANSAKSI ---
-        window.calculateRealtime = () => {
-            const fuelId = document.getElementById('txFuel').value;
-            const amount = parseFloat(document.getElementById('txAmount').value) || 0;
-            const btnSave = document.getElementById('btnSaveTx');
-
-            if (!fuelId || amount <= 0 || !cachedFuels[fuelId]) {
-                document.getElementById('resLiters').textContent = '0.
+                        tod
