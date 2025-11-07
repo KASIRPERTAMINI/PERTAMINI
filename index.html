@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir Pertamini</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(220, 53, 69, 0.12);
+            overflow: hidden;
+        }
+
+        /* Enhanced header with date/day display */
+        header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .header-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 13px;
+            opacity: 0.95;
+            flex-wrap: wrap;
+        }
+
+        .header-info span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .content {
+            padding: 25px 20px;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        /* Add styles for fuel type list */
+        .fuel-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .fuel-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .fuel-info {
+            display: grid;
+            gap: 8px;
+        }
+
+        .fuel-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .fuel-prices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .fuel-price {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .fuel-price-label {
+            color: #666;
+        }
+
+        .fuel-price-value {
+            font-weight: 700;
+            color: #dc3545;
+        }
+
+        .fuel-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #0056b3;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .results-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .result-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: #dc3545;
+            font-size: 16px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .btn-save {
+            background: white;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+        }
+
+        .btn-save:hover {
+            background: #dc3545;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* Redesigned stats cards with larger, more prominent display */
+        .stats-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stat {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe0e6 100%);
+            border-radius: 15px;
+            border: 2px solid #dc3545;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.2);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #dc3545;
+            word-break: break-all;
+        }
+
+        .stat-info {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .history-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .history-section h2 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .history-empty {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .transaction-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #dc3545;
+            font-size: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .transaction-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            color: #666;
+            font-size: 11px;
+        }
+
+        .transaction-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .transaction-profit {
+            color: #dc3545;
+            font-weight: 700;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn-reset-all {
+            background: #dc3545;
+            color: white;
+            grid-column: 1 / -1;
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px 20px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+
+        .btn-reset-all:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-reset-all:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 12px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            .header-info {
+                font-size: 12px;
+                gap: 10px;
+            }
+
+            .stats-box {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 13px;
+                padding: 11px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>KASIR PERTAMINI</h1>
+            <div class="header-info">
+                <span id="dayDisplay">Jumat</span>
+                <span>•</span>
+                <span id="dateDisplay">7 November 2025</span>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('setup', this)">Setup BBM</button>
+                <button class="tab-button" onclick="switchTab('transaction', this)">Input Transaksi</button>
+            </div>
+
+            <div id="setup" class="tab-content active">
+                <div class="input-group">
+                    <label for="fuelName">Nama BBM (contoh: Pertalite, Pertamax)</label>
+                    <input type="text" id="fuelName" placeholder="Masukkan nama BBM" value="">
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="setupCostPrice">Harga Modal/Liter (Rp)</label>
+                        <input type="number" id="setupCostPrice" placeholder="10000" step="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="setupSellPrice">Harga Jual/Liter (Rp)</label>
+                        <input type="number" id="setupSellPrice" placeholder="12500" step="100">
+                    </div>
+                </div>
+
+                <button class="btn-calculate" onclick="addFuel()">Tambah BBM</button>
+
+                <div class="fuel-list" id="fuelList">
+                    </div>
+            </div>
+
+            <div id="transaction" class="tab-content">
+                <div class="input-group">
+                    <label for="transactionFuel">Pilih Jenis BBM</label>
+                    <select id="transactionFuel" onchange="calculateTransaction()">
+                        <option value="">-- Pilih BBM --</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="paymentAmount">Nominal Pembeli (Rp)</label>
+                    <input type="number" id="paymentAmount" placeholder="50000" step="500" oninput="calculateTransaction()">
+                </div>
+
+                <div class="results-box">
+                    <div class="result-row">
+                        <span class="result-label">Jumlah Liter:</span>
+                        <span class="result-value" id="literCalculated">0.00 L</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Keuntungan/Liter:</span>
+                        <span class="result-value" id="profitPerLiter">Rp 0</span>
+                    </div>
+                    <div class="result-row" style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+                        <span class="result-label" style="font-size: 15px; font-weight: 700;">Total Keuntungan:</span>
+                        <span class="result-value" id="totalProfitCalculated" style="font-size: 18px;">Rp 0</span>
+                    </div>
+                </div>
+
+                <button class="btn-calculate" onclick="saveTransaction()">Simpan Transaksi</button>
+
+                <div class="stats-box">
+                    <div class="stat">
+                        <div class="stat-label">Profit Harian</div>
+                        <div class="stat-value" id="dailyProfit">Rp 0</div>
+                        <div class="stat-info" id="dailyProfitDate">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Profit Bulanan</div>
+                        <div class="stat-value" id="monthlyProfit">Rp 0</div>
+                        <div class="stat-info" id="monthlyProfitDate">-</div>
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <h2>Riwayat Transaksi Hari Ini</h2>
+                    <div id="transactionHistory" class="history-empty">Belum ada transaksi</div>
+                </div>
+
+                <button class="btn-reset-all" onclick="resetAllTransactions()">Reset Semua Transaksi</button>
+            </div>
+        </div>
+
+        <footer>
+            © 2025 Pertamini App | Powered by ASKA PRODUCTION 
+        </footer>
+    </div>
+
+    <script>
+        function formatRupiah(amount) {
+            // Ensure amount is a valid number
+            const validAmount = Number.isFinite(amount) ? amount : 0;
+            
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(validAmount);
+        }
+
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const date = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${date}`;
+        }
+
+        function getCurrentMonth() {
+            const today = new Date();
+            return today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+        }
+        
+        function getTodayDateDisplay() {
+            const today = new Date();
+            const daysIndonesia = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const monthsIndonesia = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const dayName = daysIndonesia[today.getDay()];
+            const date = today.getDate();
+            const monthName = monthsIndonesia[today.getMonth()];
+            
+            return `${dayName}, ${date} ${monthName}`;
+        }
+        
+        function getCurrentMonthDisplay() {
+            const today = new Date();
+            const monthsIndonesia = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const monthName = monthsIndonesia[today.getMonth()];
+            const year = today.getFullYear();
+            
+            return `${monthName} ${year}`;
+        }
+
+        function updateDateDisplay() {
+            const today = new Date();
+            const daysIndonesia = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const monthsIndonesia = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const dayName = daysIndonesia[today.getDay()];
+            const date = today.getDate();
+            const monthName = monthsIndonesia[today.getMonth()];
+            const year = today.getFullYear();
+            
+            document.getElementById('dayDisplay').textContent = dayName;
+            document.getElementById('dateDisplay').textContent = `${date} ${monthName} ${year}`;
+        }
+
+        // ===========================================
+        // ===== FUNGSI INI SUDAH DIPERBAIKI =====
+        // ===========================================
+        function switchTab(tabName, clickedButton) {
+            // Sembunyikan semua konten tab
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            // Nonaktifkan semua tombol tab
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            // Tampilkan konten tab yang dipilih
+            document.getElementById(tabName).classList.add('active');
+            // Aktifkan tombol tab yang diklik
+            clickedButton.classList.add('active');
+        }
+        // ===========================================
+        // ===========================================
+
+
+        function addFuel() {
+            const name = document.getElementById('fuelName').value.trim();
+            const costPrice = parseFloat(document.getElementById('setupCostPrice').value) || 0;
+            const sellPrice = parseFloat(document
